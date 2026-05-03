@@ -28,7 +28,7 @@ export class LocationService {
         city: data.address.city || data.address.town || data.address.village || "Unknown City"
       };
     } catch (error) {
-      console.log("Error while Reversing Location -> ", error);
+      console.error("Error while Reversing Location -> ", error);
       throw error;
     }
   }
