@@ -2,6 +2,14 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { StorageProviderName } from '../constants/storage.constants';
 
+interface S3CredentialConfig {
+  region: string;
+  bucket: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  endpoint?: string;
+}
+
 interface FirebaseCredentialConfig {
   projectId: string;
   clientEmail: string;
@@ -77,5 +85,22 @@ export class StorageConfigService {
       clientEmail,
       privateKey: privateKey.replace(/\\n/g, '\n'),
     };
+  }
+
+  getS3Config(): S3CredentialConfig {
+    const region = this.configService.get<string>('AWS_S3_REGION');
+    const bucket = this.configService.get<string>('AWS_S3_BUCKET');
+    const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.get<string>('AWS_SECRET_ACCESS_KEY');
+
+    if (!region || !bucket || !accessKeyId || !secretAccessKey) {
+      throw new InternalServerErrorException(
+        'S3 credentials are not configured. Provide AWS_S3_REGION, AWS_S3_BUCKET, AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY',
+      );
+    }
+
+    const endpoint = this.configService.get<string>('AWS_S3_ENDPOINT');
+
+    return { region, bucket, accessKeyId, secretAccessKey, endpoint };
   }
 }

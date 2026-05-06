@@ -4,13 +4,7 @@ import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator';
 export class UploadFileDto {
   @IsOptional()
   @IsString()
-  @MaxLength(120)
-  folder?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(180)
-  fileName?: string;
+  key?: string;
 
   @IsOptional()
   @Transform(({ value }) => {

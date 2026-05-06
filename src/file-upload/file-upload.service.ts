@@ -7,7 +7,7 @@ import { UploadedFile } from './interfaces/uploaded-file.interface';
 export class FileUploadService {
   constructor(
     private readonly storageProviderFactory: StorageProviderFactory,
-  ) {}
+  ) { }
 
   async uploadFile(file: UploadedFile, payload: UploadFileDto) {
     if (!file) {
@@ -17,9 +17,21 @@ export class FileUploadService {
     const provider = this.storageProviderFactory.getProvider(payload.provider);
 
     return provider.upload(file, {
-      folder: payload.folder,
-      fileName: payload.fileName,
+      key: payload.key,
       makePublic: payload.makePublic,
     });
+  }
+
+  async getPresignedUrl(key: string, expiresIn = 3600) {
+    const provider = this.storageProviderFactory.getProvider('s3');
+
+    if (typeof provider.getPresignedDownloadUrl !== 'function') {
+      throw new BadRequestException(
+        'The configured storage provider does not support pre-signed URLs',
+      );
+    }
+
+    const url = await provider.getPresignedDownloadUrl(key, expiresIn);
+    return { url };
   }
 }

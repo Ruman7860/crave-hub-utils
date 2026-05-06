@@ -67,8 +67,8 @@ export class FirebaseStorageStrategy implements StorageProviderStrategy {
   ): Promise<UploadFileResult> {
     const bucketName = this.storageConfigService.getFirebaseBucket();
     const bucket = this.getApp().storage().bucket(bucketName);
-    const fileName = this.buildFileName(file.originalname, options.fileName);
-    const filePath = this.buildFilePath(fileName, options.folder);
+    const filePath = options.key ?? file.originalname;
+    const fileName = filePath.split('/').pop() || filePath;
     const storageFile = bucket.file(filePath);
 
     try {

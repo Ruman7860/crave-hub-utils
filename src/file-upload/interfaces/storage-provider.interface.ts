@@ -2,8 +2,7 @@ import { StorageProviderName } from '../constants/storage.constants';
 import { UploadedFile } from './uploaded-file.interface';
 
 export interface UploadFileOptions {
-  folder?: string;
-  fileName?: string;
+  key?: string;
   makePublic?: boolean;
 }
 
@@ -20,4 +19,5 @@ export interface UploadFileResult {
 export interface StorageProviderStrategy {
   readonly providerName: StorageProviderName | string;
   upload(file: UploadedFile, options?: UploadFileOptions): Promise<UploadFileResult>;
+  getPresignedDownloadUrl?(key: string, expiresIn?: number): Promise<string>;
 }
